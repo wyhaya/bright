@@ -2,7 +2,7 @@
 use std::fmt;
 
 #[derive(Debug)]
-enum Style {
+pub enum Style {
     Bold,
     Dim,
     Italic,
@@ -15,7 +15,7 @@ enum Style {
 }
 
 #[derive(Debug)]
-enum Color {
+pub enum Color {
     Black,
     Red,
     Green,
@@ -72,16 +72,16 @@ fn get_background_color(color: &Option<Color>) -> Option<usize> {
 }
 
 #[derive(Debug)]
-pub struct Hue {
+pub struct Bright {
     text: String,
     color: Option<Color>,
     background: Option<Color>,
     style: Option<Style>,
 }
 
-impl Default for Hue {
+impl Default for Bright {
     fn default() -> Self {
-        Hue {
+        Bright {
             text: String::default(),
             color: None,
             background: None,
@@ -90,7 +90,7 @@ impl Default for Hue {
     }
 }
 
-impl fmt::Display for Hue {
+impl fmt::Display for Bright {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let ops = vec![
             get_style(&self.style),
@@ -114,11 +114,11 @@ impl fmt::Display for Hue {
 
 macro_rules! def_str_style {
     ($name: ident, $style: path) => {
-        fn $name(self) -> Hue {
-            Hue {
+        fn $name(self) -> Bright {
+            Bright {
                 text: String::from(self),
                 style: Some($style),
-                ..Hue::default()
+                ..Bright::default()
             }
         }
     };
@@ -126,11 +126,11 @@ macro_rules! def_str_style {
 
 macro_rules! def_str_color {
     ($name: ident, $color: path) => {
-        fn $name(self) -> Hue {
-            Hue {
+        fn $name(self) -> Bright {
+            Bright {
                 text: String::from(self),
                 color: Some($color),
-                ..Hue::default()
+                ..Bright::default()
             }
         }
     };
@@ -138,11 +138,11 @@ macro_rules! def_str_color {
 
 macro_rules! def_str_background_color {
     ($name: ident, $color: path) => {
-        fn $name(self) -> Hue {
-            Hue {
+        fn $name(self) -> Bright {
+            Bright {
                 text: String::from(self),
                 background: Some($color),
-                ..Hue::default()
+                ..Bright::default()
             }
         }
     };
@@ -150,8 +150,8 @@ macro_rules! def_str_background_color {
 
 macro_rules! def_style {
     ($name: ident, $style: path) => {
-        pub fn $name(self) -> Hue {
-             Hue {
+        pub fn $name(self) -> Bright {
+             Bright {
                 style: Some($style),
                 ..self
             }
@@ -161,8 +161,8 @@ macro_rules! def_style {
 
 macro_rules! def_color {
     ($name: ident, $color: path) => {
-        pub fn $name(self) -> Hue {
-            Hue {
+        pub fn $name(self) -> Bright {
+            Bright {
                 color: Some($color),
                 ..self
             }
@@ -172,8 +172,8 @@ macro_rules! def_color {
 
 macro_rules! def_background_color {
     ($name: ident, $color: path) => {
-        pub fn $name(self) -> Hue {
-             Hue {
+        pub fn $name(self) -> Bright {
+             Bright {
                 background: Some($color),
                 ..self
             }
@@ -181,37 +181,37 @@ macro_rules! def_background_color {
     };
 }
 
-pub trait Hues {
-    fn bold(self) -> Hue;
-    fn dim(self) -> Hue;
-    fn italic(self) -> Hue;
-    fn underline(self) -> Hue;
-    fn slow_blink(self) -> Hue;
-    fn fast_blink(self) -> Hue;
-    fn invert(self) -> Hue;
-    fn hidden(self) -> Hue;
-    fn cross_out(self) -> Hue;
+pub trait Colorful {
+    fn bold(self) -> Bright;
+    fn dim(self) -> Bright;
+    fn italic(self) -> Bright;
+    fn underline(self) -> Bright;
+    fn slow_blink(self) -> Bright;
+    fn fast_blink(self) -> Bright;
+    fn invert(self) -> Bright;
+    fn hidden(self) -> Bright;
+    fn cross_out(self) -> Bright;
 
-    fn black(self) -> Hue;
-    fn red(self) -> Hue;
-    fn green(self) -> Hue;
-    fn yellow(self) -> Hue;
-    fn blue(self) -> Hue;
-    fn magenta(self) -> Hue;
-    fn cyan(self) -> Hue;
-    fn white(self) -> Hue;
+    fn black(self) -> Bright;
+    fn red(self) -> Bright;
+    fn green(self) -> Bright;
+    fn yellow(self) -> Bright;
+    fn blue(self) -> Bright;
+    fn magenta(self) -> Bright;
+    fn cyan(self) -> Bright;
+    fn white(self) -> Bright;
 
-    fn background_black(self) -> Hue;
-    fn background_red(self) -> Hue;
-    fn background_green(self) -> Hue;
-    fn background_yellow(self) -> Hue;
-    fn background_blue(self) -> Hue;
-    fn background_magenta(self) -> Hue;
-    fn background_cyan(self) -> Hue;
-    fn background_white(self) -> Hue;
+    fn background_black(self) -> Bright;
+    fn background_red(self) -> Bright;
+    fn background_green(self) -> Bright;
+    fn background_yellow(self) -> Bright;
+    fn background_blue(self) -> Bright;
+    fn background_magenta(self) -> Bright;
+    fn background_cyan(self) -> Bright;
+    fn background_white(self) -> Bright;
 }
 
-impl Hue {
+impl Bright {
     def_style!(bold, Style::Bold);
     def_style!(dim, Style::Dim);
     def_style!(italic, Style::Italic);
@@ -241,7 +241,7 @@ impl Hue {
     def_background_color!(background_white, Color::White);
 }
 
-impl<'a> Hues for &'a str {
+impl<'a> Colorful for &'a str {
     def_str_style!(bold, Style::Bold);
     def_str_style!(dim, Style::Dim);
     def_str_style!(italic, Style::Italic);
