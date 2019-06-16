@@ -10,6 +10,7 @@ enum Style {
     SlowBlink,
     FastBlink,
     Invert,
+    Hidden,
     CrossOut,
 }
 
@@ -35,6 +36,7 @@ fn get_style(style: &Option<Style>) -> Option<usize> {
             Style::SlowBlink => 5,
             Style::FastBlink => 6,
             Style::Invert => 7,
+            Style::Hidden => 8,
             Style::CrossOut => 9,
         };
         Some(n)
@@ -187,6 +189,7 @@ pub trait Hues {
     fn slow_blink(self) -> Hue;
     fn fast_blink(self) -> Hue;
     fn invert(self) -> Hue;
+    fn hidden(self) -> Hue;
     fn cross_out(self) -> Hue;
 
     fn black(self) -> Hue;
@@ -216,6 +219,7 @@ impl Hue {
     def_style!(slow_blink, Style::SlowBlink);
     def_style!(fast_blink, Style::FastBlink);
     def_style!(invert, Style::Invert);
+    def_style!(hidden, Style::Hidden);
     def_style!(cross_out, Style::CrossOut);
 
     def_color!(black, Color::Black);
@@ -245,6 +249,7 @@ impl<'a> Hues for &'a str {
     def_str_style!(slow_blink, Style::SlowBlink);
     def_str_style!(fast_blink, Style::FastBlink);
     def_str_style!(invert, Style::Invert);
+    def_str_style!(hidden, Style::Hidden);
     def_str_style!(cross_out, Style::CrossOut);
 
     def_str_color!(black, Color::Black);
