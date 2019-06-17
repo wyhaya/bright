@@ -3,6 +3,16 @@ name = "bright"
 version = "0.1.0"
 authors = ["wyhaya <wyhaya@gmail.com>"]
 edition = "2018"
+license = "MIT"
 
+description = "Beautiful terminal color"
+homepage = "https://github.com/wyhaya/bright"
+repository = "https://github.com/wyhaya/bright.git"
+readme = "README.md"
+keywords = [
+    "color",
+    "hue",
+    "colorful"
+]
 
 [dependencies]

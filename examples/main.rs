@@ -1,31 +1,45 @@
 use bright::*;
 
+macro_rules! output {
+    ( $( $x:expr ),* ) => {
+        {
+            $(
+                print!("{} ", $x);
+            )*
+            print!("\n");
+        }
+    };
+}
+
 fn main() {
-    println!("{}", "Hello world".bold());
-    println!("{}", "Hello world".dim());
-    println!("{}", "Hello world".italic());
-    println!("{}", "Hello world".underline());
-    println!("{}", "Hello world".slow_blink());
-    println!("{}", "Hello world".fast_blink());
-    println!("{}", "Hello world".invert());
-    println!("{}", "Hello world".hidden());
-    println!("{}", "Hello world".cross_out());
+    output![
+        " bold ".bold(),
+        "  dim ".dim(),
+        " italic ".italic(),
+        "underline ".underline(),
+        " fast_blink ".fast_blink(),
+        " invert ".invert()
+    ];
 
-    println!("{}", "Hello world".black());
-    println!("{}", "Hello world".red());
-    println!("{}", "Hello world".green());
-    println!("{}", "Hello world".yellow());
-    println!("{}", "Hello world".blue());
-    println!("{}", "Hello world".magenta());
-    println!("{}", "Hello world".cyan());
-    println!("{}", "Hello world".white());
+    output![
+        " black ".black(),
+        " red ".red(),
+        " green ".green(),
+        " yellow ".yellow(),
+        " blue ".blue(),
+        " magenta ".magenta(),
+        " cyan ".cyan(),
+        " white ".white()
+    ];
 
-    println!("{}", "Hello world".background_black());
-    println!("{}", "Hello world".background_red());
-    println!("{}", "Hello world".background_green());
-    println!("{}", "Hello world".background_yellow());
-    println!("{}", "Hello world".background_blue());
-    println!("{}", "Hello world".background_magenta());
-    println!("{}", "Hello world".background_cyan());
-    println!("{}", "Hello world".background_white());
+    output![
+        " black ".bg_black(),
+        " red ".bg_red(),
+        " green ".bg_green(),
+        " yellow ".bg_yellow(),
+        " blue ".bg_blue(),
+        " magenta ".bg_magenta(),
+        " cyan ".bg_cyan(),
+        " white ".bg_white()
+    ];
 }

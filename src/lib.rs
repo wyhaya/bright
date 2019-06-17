@@ -201,14 +201,14 @@ pub trait Colorful {
     fn cyan(self) -> Bright;
     fn white(self) -> Bright;
 
-    fn background_black(self) -> Bright;
-    fn background_red(self) -> Bright;
-    fn background_green(self) -> Bright;
-    fn background_yellow(self) -> Bright;
-    fn background_blue(self) -> Bright;
-    fn background_magenta(self) -> Bright;
-    fn background_cyan(self) -> Bright;
-    fn background_white(self) -> Bright;
+    fn bg_black(self) -> Bright;
+    fn bg_red(self) -> Bright;
+    fn bg_green(self) -> Bright;
+    fn bg_yellow(self) -> Bright;
+    fn bg_blue(self) -> Bright;
+    fn bg_magenta(self) -> Bright;
+    fn bg_cyan(self) -> Bright;
+    fn bg_white(self) -> Bright;
 }
 
 impl Bright {
@@ -231,42 +231,52 @@ impl Bright {
     def_color!(cyan, Color::Cyan);
     def_color!(white, Color::White);
 
-    def_background_color!(background_black, Color::Black);
-    def_background_color!(background_red, Color::Red);
-    def_background_color!(background_green, Color::Green);
-    def_background_color!(background_yellow, Color::Yellow);
-    def_background_color!(background_blue, Color::Blue);
-    def_background_color!(background_magenta, Color::Magenta);
-    def_background_color!(background_cyan, Color::Cyan);
-    def_background_color!(background_white, Color::White);
+    def_background_color!(bg_black, Color::Black);
+    def_background_color!(bg_red, Color::Red);
+    def_background_color!(bg_green, Color::Green);
+    def_background_color!(bg_yellow, Color::Yellow);
+    def_background_color!(bg_blue, Color::Blue);
+    def_background_color!(bg_magenta, Color::Magenta);
+    def_background_color!(bg_cyan, Color::Cyan);
+    def_background_color!(bg_white, Color::White);
+}
+
+macro_rules! def_extend {
+    () => {
+        def_str_style!(bold, Style::Bold);
+        def_str_style!(dim, Style::Dim);
+        def_str_style!(italic, Style::Italic);
+        def_str_style!(underline, Style::Underline);
+        def_str_style!(slow_blink, Style::SlowBlink);
+        def_str_style!(fast_blink, Style::FastBlink);
+        def_str_style!(invert, Style::Invert);
+        def_str_style!(hidden, Style::Hidden);
+        def_str_style!(cross_out, Style::CrossOut);
+
+        def_str_color!(black, Color::Black);
+        def_str_color!(red, Color::Red);
+        def_str_color!(green, Color::Green);
+        def_str_color!(yellow, Color::Yellow);
+        def_str_color!(blue, Color::Blue);
+        def_str_color!(magenta, Color::Magenta);
+        def_str_color!(cyan, Color::Cyan);
+        def_str_color!(white, Color::White);
+
+        def_str_background_color!(bg_black, Color::Black);
+        def_str_background_color!(bg_red, Color::Red);
+        def_str_background_color!(bg_green, Color::Green);
+        def_str_background_color!(bg_yellow, Color::Yellow);
+        def_str_background_color!(bg_blue, Color::Blue);
+        def_str_background_color!(bg_magenta, Color::Magenta);
+        def_str_background_color!(bg_cyan, Color::Cyan);
+        def_str_background_color!(bg_white, Color::White);
+    };
 }
 
 impl<'a> Colorful for &'a str {
-    def_str_style!(bold, Style::Bold);
-    def_str_style!(dim, Style::Dim);
-    def_str_style!(italic, Style::Italic);
-    def_str_style!(underline, Style::Underline);
-    def_str_style!(slow_blink, Style::SlowBlink);
-    def_str_style!(fast_blink, Style::FastBlink);
-    def_str_style!(invert, Style::Invert);
-    def_str_style!(hidden, Style::Hidden);
-    def_str_style!(cross_out, Style::CrossOut);
+    def_extend!();
+}
 
-    def_str_color!(black, Color::Black);
-    def_str_color!(red, Color::Red);
-    def_str_color!(green, Color::Green);
-    def_str_color!(yellow, Color::Yellow);
-    def_str_color!(blue, Color::Blue);
-    def_str_color!(magenta, Color::Magenta);
-    def_str_color!(cyan, Color::Cyan);
-    def_str_color!(white, Color::White);
-
-    def_str_background_color!(background_black, Color::Black);
-    def_str_background_color!(background_red, Color::Red);
-    def_str_background_color!(background_green, Color::Green);
-    def_str_background_color!(background_yellow, Color::Yellow);
-    def_str_background_color!(background_blue, Color::Blue);
-    def_str_background_color!(background_magenta, Color::Magenta);
-    def_str_background_color!(background_cyan, Color::Cyan);
-    def_str_background_color!(background_white, Color::White);
+impl Colorful for String {
+    def_extend!();
 }
