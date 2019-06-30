@@ -42,4 +42,6 @@ fn main() {
         " cyan ".bg_cyan(),
         " white ".bg_white()
     ];
+
+    output![" RGB ".rgb(40, 44, 52).bg_rgb(3, 169, 244)];
 }

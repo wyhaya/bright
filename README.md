@@ -23,7 +23,7 @@ bright = "0.1.0"
 use bright::*;
 
 fn main() {
-    println!("{}", "Hello world".red().bold().bg_green());
+    println!("{}", "Hello world".bold().red().bg_green());
 }
 ```
 
@@ -50,6 +50,7 @@ fn main() {
 * `.magenta()`
 * `.cyan()`
 * `.white()`
+* `.rgb(r, g, b)`
 
 ### Background colors
 
@@ -61,5 +62,6 @@ fn main() {
 * `.bg_magenta()`
 * `.bg_cyan()`
 * `.bg_white()`
+* `.bg_rgb(r, g, b)`
 
 
