@@ -15,7 +15,7 @@ Add this in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bright = "0.1.0"
+bright = "0.2.0"
 ```
 
 ## Usage
