@@ -1,7 +1,6 @@
 
 # bright
 
-[![Build Status](https://img.shields.io/travis/wyhaya/bright.svg?style=flat-square)](https://travis-ci.org/wyhaya/bright)
 [![Crates.io](https://img.shields.io/crates/v/bright.svg?style=flat-square)](https://crates.io/crates/bright)
 [![LICENSE](https://img.shields.io/crates/l/bright.svg?style=flat-square)](https://github.com/wyhaya/bright/blob/master/LICENSE)
 
@@ -15,15 +14,20 @@ Add this in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bright = "0.2.0"
+bright = "*"
 ```
 
 ## Usage
 ```rust
 use bright::*;
+use std::io::{stdout, Write};
 
 fn main() {
     println!("{}", "Hello world".bold().red().bg_green());
+    
+    // stdout
+    let ansi = Bright::new("Hello world").red().to_string();
+    stdout().write(ansi.as_bytes());
 }
 ```
 

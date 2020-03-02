@@ -90,6 +90,17 @@ pub struct Bright {
     style: Option<Style>,
 }
 
+impl Bright {
+    pub fn new<T: ToString>(text: T) -> Bright {
+        Bright {
+            text: text.to_string(),
+            color: None,
+            background: None,
+            style: None,
+        }
+    }
+}
+
 impl Default for Bright {
     fn default() -> Self {
         Bright {
