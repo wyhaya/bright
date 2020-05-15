@@ -24,61 +24,62 @@ pub enum Color {
     Magenta,
     Cyan,
     White,
-    Rgb(usize, usize, usize),
+    Rgb(u8, u8, u8),
 }
 
-fn get_style(style: &Option<Style>) -> Option<usize> {
-    if let Some(style) = style {
-        let n = match style {
-            Style::Bold => 1,
-            Style::Dim => 2,
-            Style::Italic => 3,
-            Style::Underline => 4,
-            Style::SlowBlink => 5,
-            Style::FastBlink => 6,
-            Style::Invert => 7,
-            Style::Hidden => 8,
-            Style::CrossOut => 9,
-        };
-        return Some(n);
+#[derive(Debug)]
+enum Value {
+    One(u8),
+    Five(u8, u8, u8, u8, u8),
+}
+
+fn get_style_value(style: &Style) -> String {
+    match style {
+        Style::Bold => 1,
+        Style::Dim => 2,
+        Style::Italic => 3,
+        Style::Underline => 4,
+        Style::SlowBlink => 5,
+        Style::FastBlink => 6,
+        Style::Invert => 7,
+        Style::Hidden => 8,
+        Style::CrossOut => 9,
     }
-    None
+    .to_string()
 }
 
-fn get_color(color: &Option<Color>) -> Option<Vec<usize>> {
-    if let Some(color) = color {
-        let n = match color {
-            Color::Black => vec![30],
-            Color::Red => vec![31],
-            Color::Green => vec![32],
-            Color::Yellow => vec![33],
-            Color::Blue => vec![34],
-            Color::Magenta => vec![35],
-            Color::Cyan => vec![36],
-            Color::White => vec![37],
-            Color::Rgb(r, g, b) => vec![38, 2, *r, *g, *b],
-        };
-        return Some(n);
+fn get_color_value(color: &Color) -> Value {
+    match color {
+        Color::Black => Value::One(30),
+        Color::Red => Value::One(31),
+        Color::Green => Value::One(32),
+        Color::Yellow => Value::One(33),
+        Color::Blue => Value::One(34),
+        Color::Magenta => Value::One(35),
+        Color::Cyan => Value::One(36),
+        Color::White => Value::One(37),
+        Color::Rgb(r, g, b) => Value::Five(38, 2, *r, *g, *b),
     }
-    None
 }
 
-fn get_background_color(color: &Option<Color>) -> Option<Vec<usize>> {
-    if let Some(color) = color {
-        let n = match color {
-            Color::Black => vec![40],
-            Color::Red => vec![41],
-            Color::Green => vec![42],
-            Color::Yellow => vec![43],
-            Color::Blue => vec![44],
-            Color::Magenta => vec![45],
-            Color::Cyan => vec![46],
-            Color::White => vec![47],
-            Color::Rgb(r, g, b) => vec![48, 2, *r, *g, *b],
-        };
-        Some(n)
-    } else {
-        None
+fn get_background_color_value(color: &Color) -> Value {
+    match color {
+        Color::Black => Value::One(40),
+        Color::Red => Value::One(41),
+        Color::Green => Value::One(42),
+        Color::Yellow => Value::One(43),
+        Color::Blue => Value::One(44),
+        Color::Magenta => Value::One(45),
+        Color::Cyan => Value::One(46),
+        Color::White => Value::One(47),
+        Color::Rgb(r, g, b) => Value::Five(48, 2, *r, *g, *b),
+    }
+}
+
+fn merge_value(value: Value) -> String {
+    match value {
+        Value::One(data) => data.to_string(),
+        Value::Five(a_, b_, r, g, b) => format!("{};{};{};{};{}", a_, b_, r, g, b),
     }
 }
 
@@ -91,9 +92,9 @@ pub struct Bright {
 }
 
 impl Bright {
-    pub fn new<T: ToString>(text: T) -> Bright {
+    pub fn new<T: AsRef<str>>(text: T) -> Bright {
         Bright {
-            text: text.to_string(),
+            text: text.as_ref().to_string(),
             color: None,
             background: None,
             style: None,
@@ -112,43 +113,25 @@ impl Default for Bright {
     }
 }
 
-fn merge_color(color: Option<Vec<usize>>) -> Option<String> {
-    match color {
-        Some(vec) => {
-            let s = vec
-                .iter()
-                .map(|item| item.to_string())
-                .collect::<Vec<String>>()
-                .join(";");
-            Some(s)
-        }
-        None => None,
-    }
-}
-
 impl fmt::Display for Bright {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let style = match get_style(&self.style) {
-            Some(d) => Some(d.to_string()),
-            None => None,
-        };
+        let style = self.style.as_ref().map(get_style_value);
+        let color = self.color.as_ref().map(get_color_value);
+        let background = self.background.as_ref().map(get_background_color_value);
 
-        let all = vec![
-            style,
-            merge_color(get_color(&self.color)),
-            merge_color(get_background_color(&self.background)),
-        ];
+        let mut options = Vec::with_capacity(3);
 
-        let ops = all
-            .iter()
-            .filter_map(|item| match item {
-                Some(d) => Some(d.clone()),
-                None => None,
-            })
-            .collect::<Vec<String>>()
-            .join(";");
+        if let Some(style) = style {
+            options.push(style);
+        }
+        if let Some(color) = color {
+            options.push(merge_value(color));
+        }
+        if let Some(color) = background {
+            options.push(merge_value(color));
+        }
 
-        let output = format!("\x1B[{}m{}\x1B[0m", ops, self.text);
+        let output = format!("\x1B[{}m{}\x1B[0m", options.join(";"), self.text);
 
         write!(f, "{}", output)
     }
@@ -193,7 +176,7 @@ macro_rules! def_str_background_color {
 macro_rules! def_style {
     ($name: ident, $style: path) => {
         pub fn $name(self) -> Bright {
-             Bright {
+            Bright {
                 style: Some($style),
                 ..self
             }
@@ -215,7 +198,7 @@ macro_rules! def_color {
 macro_rules! def_background_color {
     ($name: ident, $color: path) => {
         pub fn $name(self) -> Bright {
-             Bright {
+            Bright {
                 background: Some($color),
                 ..self
             }
@@ -242,7 +225,7 @@ pub trait Colorful {
     fn magenta(self) -> Bright;
     fn cyan(self) -> Bright;
     fn white(self) -> Bright;
-    fn rgb(self, r: usize, g: usize, b: usize) -> Bright;
+    fn rgb(self, r: u8, g: u8, b: u8) -> Bright;
 
     fn bg_black(self) -> Bright;
     fn bg_red(self) -> Bright;
@@ -252,7 +235,7 @@ pub trait Colorful {
     fn bg_magenta(self) -> Bright;
     fn bg_cyan(self) -> Bright;
     fn bg_white(self) -> Bright;
-    fn bg_rgb(self, r: usize, g: usize, b: usize) -> Bright;
+    fn bg_rgb(self, r: u8, g: u8, b: u8) -> Bright;
 }
 
 impl Bright {
@@ -274,7 +257,7 @@ impl Bright {
     def_color!(magenta, Color::Magenta);
     def_color!(cyan, Color::Cyan);
     def_color!(white, Color::White);
-    pub fn rgb(self, r: usize, g: usize, b: usize) -> Bright {
+    pub fn rgb(self, r: u8, g: u8, b: u8) -> Bright {
         Bright {
             color: Some(Color::Rgb(r, g, b)),
             ..self
@@ -289,7 +272,7 @@ impl Bright {
     def_background_color!(bg_magenta, Color::Magenta);
     def_background_color!(bg_cyan, Color::Cyan);
     def_background_color!(bg_white, Color::White);
-    pub fn bg_rgb(self, r: usize, g: usize, b: usize) -> Bright {
+    pub fn bg_rgb(self, r: u8, g: u8, b: u8) -> Bright {
         Bright {
             background: Some(Color::Rgb(r, g, b)),
             ..self
@@ -317,7 +300,7 @@ macro_rules! def_extend {
         def_str_color!(magenta, Color::Magenta);
         def_str_color!(cyan, Color::Cyan);
         def_str_color!(white, Color::White);
-        fn rgb(self, r: usize, g: usize, b: usize) -> Bright {
+        fn rgb(self, r: u8, g: u8, b: u8) -> Bright {
             Bright {
                 text: String::from(self),
                 color: Some(Color::Rgb(r, g, b)),
@@ -333,7 +316,7 @@ macro_rules! def_extend {
         def_str_background_color!(bg_magenta, Color::Magenta);
         def_str_background_color!(bg_cyan, Color::Cyan);
         def_str_background_color!(bg_white, Color::White);
-        fn bg_rgb(self, r: usize, g: usize, b: usize) -> Bright {
+        fn bg_rgb(self, r: u8, g: u8, b: u8) -> Bright {
             Bright {
                 text: String::from(self),
                 background: Some(Color::Rgb(r, g, b)),
