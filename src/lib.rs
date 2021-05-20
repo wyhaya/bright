@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Style {
     Bold,
     Dim,
@@ -14,7 +14,7 @@ pub enum Style {
     CrossOut,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Color {
     Black,
     Red,
@@ -27,10 +27,10 @@ pub enum Color {
     Rgb(u8, u8, u8),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 enum Value {
-    One(u8),
-    Five(u8, u8, u8, u8, u8),
+    Single(u8),
+    Multiple(u8, u8, u8, u8, u8),
 }
 
 fn get_style_value(style: &Style) -> String {
@@ -50,36 +50,36 @@ fn get_style_value(style: &Style) -> String {
 
 fn get_color_value(color: &Color) -> Value {
     match color {
-        Color::Black => Value::One(30),
-        Color::Red => Value::One(31),
-        Color::Green => Value::One(32),
-        Color::Yellow => Value::One(33),
-        Color::Blue => Value::One(34),
-        Color::Magenta => Value::One(35),
-        Color::Cyan => Value::One(36),
-        Color::White => Value::One(37),
-        Color::Rgb(r, g, b) => Value::Five(38, 2, *r, *g, *b),
+        Color::Black => Value::Single(30),
+        Color::Red => Value::Single(31),
+        Color::Green => Value::Single(32),
+        Color::Yellow => Value::Single(33),
+        Color::Blue => Value::Single(34),
+        Color::Magenta => Value::Single(35),
+        Color::Cyan => Value::Single(36),
+        Color::White => Value::Single(37),
+        Color::Rgb(r, g, b) => Value::Multiple(38, 2, *r, *g, *b),
     }
 }
 
 fn get_background_color_value(color: &Color) -> Value {
     match color {
-        Color::Black => Value::One(40),
-        Color::Red => Value::One(41),
-        Color::Green => Value::One(42),
-        Color::Yellow => Value::One(43),
-        Color::Blue => Value::One(44),
-        Color::Magenta => Value::One(45),
-        Color::Cyan => Value::One(46),
-        Color::White => Value::One(47),
-        Color::Rgb(r, g, b) => Value::Five(48, 2, *r, *g, *b),
+        Color::Black => Value::Single(40),
+        Color::Red => Value::Single(41),
+        Color::Green => Value::Single(42),
+        Color::Yellow => Value::Single(43),
+        Color::Blue => Value::Single(44),
+        Color::Magenta => Value::Single(45),
+        Color::Cyan => Value::Single(46),
+        Color::White => Value::Single(47),
+        Color::Rgb(r, g, b) => Value::Multiple(48, 2, *r, *g, *b),
     }
 }
 
 fn merge_value(value: Value) -> String {
     match value {
-        Value::One(data) => data.to_string(),
-        Value::Five(a_, b_, r, g, b) => format!("{};{};{};{};{}", a_, b_, r, g, b),
+        Value::Single(data) => data.to_string(),
+        Value::Multiple(a_, b_, r, g, b) => format!("{};{};{};{};{}", a_, b_, r, g, b),
     }
 }
 
@@ -120,7 +120,6 @@ impl fmt::Display for Bright {
         let background = self.background.as_ref().map(get_background_color_value);
 
         let mut options = Vec::with_capacity(3);
-
         if let Some(style) = style {
             options.push(style);
         }
@@ -131,9 +130,7 @@ impl fmt::Display for Bright {
             options.push(merge_value(color));
         }
 
-        let output = format!("\x1B[{}m{}\x1B[0m", options.join(";"), self.text);
-
-        write!(f, "{}", output)
+        write!(f, "\x1B[{}m{}\x1B[0m", options.join(";"), self.text)
     }
 }
 
